@@ -9,6 +9,8 @@ enum PointsRelation: Equatable {
 }
 
 protocol MathHelper {
+    func calculateDistanceBetween(point1: CGPoint, point2: CGPoint) -> CGFloat
+    
     func intersectionOfLineSegments(line1: Line, line2: Line) -> CGPoint?
     
     func calculateClockwiseRatio(of point1: CGPoint, and point2: CGPoint) -> CGFloat
@@ -16,6 +18,10 @@ protocol MathHelper {
 }
 
 final class MathHelperImplementation: MathHelper {
+    func calculateDistanceBetween(point1: CGPoint, point2: CGPoint) -> CGFloat {
+        return (pow((point1.x - point2.x), 2) + pow((point1.y - point2.y), 2)).squareRoot()
+    }
+    
     // http://www.cs.swan.ac.uk/~cssimon/line_intersection.html
     func intersectionOfLineSegments(line1: Line, line2: Line) -> CGPoint? {
         // line1: p1: (x1, y1), p2: (x2, y2)

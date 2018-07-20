@@ -71,7 +71,27 @@ class MathHelperTests: XCTestCase {
         
         XCTAssertEqual(mathHelper.determinePointsRelation(point1: point1, point2: point2), PointsRelation.inLine)
     }
+
+    func test_calculateDistanceBetween_zero() {
+        let point1 = CGPoint(x: 0, y: 0)
+        let point2 = CGPoint(x: 0, y: 0)
+        
+        XCTAssertEqual(mathHelper.calculateDistanceBetween(point1: point1, point2: point2), 0)
+    }
     
+    func test_calculateDistanceBetween_example1() {
+        let point1 = CGPoint(x: 0, y: 0)
+        let point2 = CGPoint(x: 0, y: 1)
+        
+        XCTAssertEqual(mathHelper.calculateDistanceBetween(point1: point1, point2: point2), 1)
+    }
     
+    func test_calculateDistanceBetween_example2() {
+        // Pythagorean triple
+        let point1 = CGPoint(x: 0, y: 0)
+        let point2 = CGPoint(x: 3, y: 4)
+        
+        XCTAssertEqual(mathHelper.calculateDistanceBetween(point1: point1, point2: point2), 5)
+    }
     
 }
