@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C51366462102906F00EB681A /* MathHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51366452102906F00EB681A /* MathHelperTests.swift */; };
 		C53F636F21028E5D009F023C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F636E21028E5D009F023C /* AppDelegate.swift */; };
 		C53F637121028E5D009F023C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F637021028E5D009F023C /* ViewController.swift */; };
 		C53F637421028E5D009F023C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C53F637221028E5D009F023C /* Main.storyboard */; };
 		C53F637621028E5F009F023C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C53F637521028E5F009F023C /* Assets.xcassets */; };
 		C53F637921028E5F009F023C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C53F637721028E5F009F023C /* LaunchScreen.storyboard */; };
 		C53F638421028E60009F023C /* PlanarFaceFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F638321028E60009F023C /* PlanarFaceFinderTests.swift */; };
+		C53F639021028F04009F023C /* MathHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F638F21028F04009F023C /* MathHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C51366452102906F00EB681A /* MathHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathHelperTests.swift; sourceTree = "<group>"; };
 		C53F636B21028E5D009F023C /* PlanarFaceFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlanarFaceFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C53F636E21028E5D009F023C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C53F637021028E5D009F023C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -36,6 +39,7 @@
 		C53F637F21028E60009F023C /* PlanarFaceFinderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlanarFaceFinderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C53F638321028E60009F023C /* PlanarFaceFinderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanarFaceFinderTests.swift; sourceTree = "<group>"; };
 		C53F638521028E60009F023C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C53F638F21028F04009F023C /* MathHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +60,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C51366442102905900EB681A /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				C51366452102906F00EB681A /* MathHelperTests.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		C53F636221028E5D009F023C = {
 			isa = PBXGroup;
 			children = (
@@ -77,6 +89,7 @@
 		C53F636D21028E5D009F023C /* PlanarFaceFinder */ = {
 			isa = PBXGroup;
 			children = (
+				C53F638E21028ED8009F023C /* Helpers */,
 				C53F636E21028E5D009F023C /* AppDelegate.swift */,
 				C53F637021028E5D009F023C /* ViewController.swift */,
 				C53F637221028E5D009F023C /* Main.storyboard */,
@@ -90,10 +103,19 @@
 		C53F638221028E60009F023C /* PlanarFaceFinderTests */ = {
 			isa = PBXGroup;
 			children = (
+				C51366442102905900EB681A /* Helpers */,
 				C53F638321028E60009F023C /* PlanarFaceFinderTests.swift */,
 				C53F638521028E60009F023C /* Info.plist */,
 			);
 			path = PlanarFaceFinderTests;
+			sourceTree = "<group>";
+		};
+		C53F638E21028ED8009F023C /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				C53F638F21028F04009F023C /* MathHelper.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -197,6 +219,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C53F639021028F04009F023C /* MathHelper.swift in Sources */,
 				C53F637121028E5D009F023C /* ViewController.swift in Sources */,
 				C53F636F21028E5D009F023C /* AppDelegate.swift in Sources */,
 			);
@@ -207,6 +230,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C53F638421028E60009F023C /* PlanarFaceFinderTests.swift in Sources */,
+				C51366462102906F00EB681A /* MathHelperTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
