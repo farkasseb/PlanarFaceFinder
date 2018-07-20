@@ -28,4 +28,50 @@ class MathHelperTests: XCTestCase {
         XCTAssertEqual(calculatedIntersectionPoint!, intersectionPoint)
     }
     
+    func test_calculateClockwiseRatio_clockwise() {
+        let point1 = CGPoint(x: 3, y: 3)
+        let point2 = CGPoint(x: 6, y: 0)
+        
+        XCTAssertGreaterThan(mathHelper.calculateClockwiseRatio(of: point1, and: point2), 0)
+    }
+    
+    func test_calculateClockwiseRatio_counterClockwise() {
+        let point1 = CGPoint(x: 6, y: 0)
+        let point2 = CGPoint(x: 3, y: 3)
+        
+        XCTAssertLessThan(mathHelper.calculateClockwiseRatio(of: point1, and: point2), 0)
+    }
+    
+    func test_calculateClockwiseRatio_inLine() {
+        let point1 = CGPoint(x: 0, y: 0)
+        let point2 = CGPoint(x: 3, y: 0)
+        
+        XCTAssertEqual(mathHelper.calculateClockwiseRatio(of: point1, and: point2), 0)
+    }
+    
+    func test_determinePointsRelation_clockwise() {
+        let point1 = CGPoint(x: 3, y: 3)
+        let point2 = CGPoint(x: 6, y: 0)
+        
+        let ratio = mathHelper.calculateClockwiseRatio(of: point1, and: point2)
+        XCTAssertEqual(mathHelper.determinePointsRelation(point1: point1, point2: point2), PointsRelation.clockwise(ratio))
+    }
+    
+    func test_determinePointsRelation_counterClockwise() {
+        let point1 = CGPoint(x: 6, y: 0)
+        let point2 = CGPoint(x: 3, y: 3)
+        
+        let ratio = mathHelper.calculateClockwiseRatio(of: point1, and: point2)
+        XCTAssertEqual(mathHelper.determinePointsRelation(point1: point1, point2: point2), PointsRelation.counterClockwise(ratio))
+    }
+    
+    func test_determinePointsRelation_inLine() {
+        let point1 = CGPoint(x: 0, y: 0)
+        let point2 = CGPoint(x: 3, y: 0)
+        
+        XCTAssertEqual(mathHelper.determinePointsRelation(point1: point1, point2: point2), PointsRelation.inLine)
+    }
+    
+    
+    
 }

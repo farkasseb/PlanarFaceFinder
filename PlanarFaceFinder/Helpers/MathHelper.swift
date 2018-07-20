@@ -2,13 +2,21 @@ import UIKit
 
 typealias Line = (p1: CGPoint, p2: CGPoint)
 
+enum PointsRelation: Equatable {
+    case clockwise(CGFloat)
+    case counterClockwise(CGFloat)
+    case inLine
+}
+
 protocol MathHelper {
     func intersectionOfLineSegments(line1: Line, line2: Line) -> CGPoint?
+    
+    func calculateClockwiseRatio(of point1: CGPoint, and point2: CGPoint) -> CGFloat
+    func determinePointsRelation(point1: CGPoint, point2: CGPoint) -> PointsRelation
 }
 
 final class MathHelperImplementation: MathHelper {
-    
-    //http://www.cs.swan.ac.uk/~cssimon/line_intersection.html
+    // http://www.cs.swan.ac.uk/~cssimon/line_intersection.html
     func intersectionOfLineSegments(line1: Line, line2: Line) -> CGPoint? {
         // line1: p1: (x1, y1), p2: (x2, y2)
         // line2: p1: (x3, y3), p2: (x4, y4)
@@ -36,6 +44,24 @@ final class MathHelperImplementation: MathHelper {
             return CGPoint(x: x, y: y)
         } else {
             return nil
+        }
+    }
+    
+    // https://stackoverflow.com/a/1165943/3503324
+    func calculateClockwiseRatio(of point1: CGPoint, and point2: CGPoint) -> CGFloat {
+        // (x2 − x1)(y2 + y1)
+        return (point2.x - point1.x) * (point2.y + point1.y)
+    }
+    
+    func determinePointsRelation(point1: CGPoint, point2: CGPoint) -> PointsRelation {
+        let ratio = calculateClockwiseRatio(of: point1, and: point2)
+        switch ratio {
+        case let clockwiseRatio where ratio > 0:
+            return PointsRelation.clockwise(clockwiseRatio)
+        case let counterClockwiseRatio where ratio < 0:
+            return PointsRelation.counterClockwise(counterClockwiseRatio)
+        default:
+            return PointsRelation.inLine
         }
     }
 }
