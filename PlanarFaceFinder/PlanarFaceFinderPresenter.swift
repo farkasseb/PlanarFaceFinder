@@ -13,6 +13,7 @@ protocol PlanarFaceFinderPresenterInput: class {
 final class PlanarFaceFinderPresenter {
     weak var view: PlanarFaceFinderView?
     
+    private let mathHelper: MathHelper = MathHelperImplementation.sharedInstance
     private var lineSegments = [LineSegment]()
     
     private var startPoint: CGPoint?
@@ -23,7 +24,30 @@ final class PlanarFaceFinderPresenter {
         lineSegments.forEach { startPoint, endPoint in
             view?.drawLine(from: startPoint, to: endPoint)
         }
-        view?.fillAreaEnclosedBy(points: [CGPoint(x: 0, y: 0), CGPoint(x: 100, y: 0), CGPoint(x: 100, y: 100), CGPoint(x: 0, y: 100)])
+        getAllVertices().forEach { vertice in
+            view?.drawCircle(at: vertice)
+        }
+    }
+    
+    private func getAllVertices() -> Set<CGPoint> {
+        var allVertices = Set<CGPoint>()
+        
+        lineSegments.forEach { (startPoint, endPoint) in
+            allVertices.insert(startPoint)
+            allVertices.insert(endPoint)
+        }
+        
+        var tempLineSegments = lineSegments
+        while !tempLineSegments.isEmpty {
+            let firstLineSegment = tempLineSegments.removeFirst()
+            tempLineSegments.forEach { (startPoint, endPoint) in
+                if let intersection = mathHelper.intersection(of: (startPoint, endPoint), and: (firstLineSegment.p1, firstLineSegment.p2)) {
+                    allVertices.insert(intersection)
+                }
+            }
+        }
+        
+        return allVertices
     }
 }
 

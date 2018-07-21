@@ -4,6 +4,7 @@ protocol PlanarFaceFinderView: class {
     var presenter: PlanarFaceFinderPresenterInput? { get set }
     
     func clearCanvas()
+    func drawCircle(at point: CGPoint)
     func drawLine(from startPoint: CGPoint, to endPoint: CGPoint)
     func fillAreaEnclosedBy(points: [CGPoint])
 }
@@ -90,6 +91,14 @@ extension PlanarFaceFinderViewController: PlanarFaceFinderView {
         canvas?.layer.sublayers?.filter({ $0 is CAShapeLayer }).forEach({ $0.removeFromSuperlayer() })
         canvas?.image = nil
     }
+
+    func drawCircle(at point: CGPoint) {
+        let bezierPath = UIBezierPath(arcCenter: point, radius: 5, startAngle: 0, endAngle: 360, clockwise: true)
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = bezierPath.cgPath
+        shapeLayer.fillColor = UIColor.blue.cgColor
+        canvas?.layer.addSublayer(shapeLayer)
+    }
     
     func drawLine(from startPoint: CGPoint, to endPoint: CGPoint) {
         UIGraphicsBeginImageContext(view.frame.size)
@@ -125,7 +134,6 @@ extension PlanarFaceFinderViewController: PlanarFaceFinderView {
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = bezierPath.cgPath
         shapeLayer.fillColor = fillColor.cgColor
-        
         canvas?.layer.addSublayer(shapeLayer)
     }
 }

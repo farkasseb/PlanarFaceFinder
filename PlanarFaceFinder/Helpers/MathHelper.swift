@@ -52,6 +52,8 @@ protocol MathHelper {
 }
 
 final class MathHelperImplementation: MathHelper {
+    static let sharedInstance = MathHelperImplementation()
+    
     func isLineSegment(_ lineSegment: LineSegment, contains point: CGPoint) -> Bool {
         // p1 + t(p2 − p1)
         let tXDenominator = lineSegment.p2.x - lineSegment.p1.x
