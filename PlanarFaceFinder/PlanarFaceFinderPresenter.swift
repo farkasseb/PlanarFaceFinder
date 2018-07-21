@@ -16,38 +16,51 @@ final class PlanarFaceFinderPresenter {
     private let mathHelper: MathHelper = MathHelperImplementation.sharedInstance
     private var lineSegments = [LineSegment]()
     
+    private var calculatedVertices = Set<CGPoint>()
+    private var calculatedLineSegments = [LineSegment]()
+    
     private var startPoint: CGPoint?
     private var endPoint: CGPoint?
     
     private func drawLineSegments() {
         view?.clearCanvas()
-        lineSegments.forEach { startPoint, endPoint in
-            view?.drawLine(from: startPoint, to: endPoint)
-        }
-        getAllVertices().forEach { vertice in
+        
+        calculateVerticesAndEdges()
+        calculatedVertices.forEach { vertice in
             view?.drawCircle(at: vertice)
+        }
+        calculatedLineSegments.forEach { (startPoint, endPoint) in
+            view?.drawLine(from: startPoint, to: endPoint)
         }
     }
     
-    private func getAllVertices() -> Set<CGPoint> {
-        var allVertices = Set<CGPoint>()
+    private func calculateVerticesAndEdges() {
+        calculatedVertices.removeAll()
+        calculatedLineSegments.removeAll()
         
         lineSegments.forEach { (startPoint, endPoint) in
-            allVertices.insert(startPoint)
-            allVertices.insert(endPoint)
+            calculatedVertices.insert(startPoint)
+            calculatedVertices.insert(endPoint)
         }
         
         var tempLineSegments = lineSegments
         while !tempLineSegments.isEmpty {
             let firstLineSegment = tempLineSegments.removeFirst()
+            calculatedLineSegments.append(firstLineSegment)
+            
             tempLineSegments.forEach { (startPoint, endPoint) in
-                if let intersection = mathHelper.intersection(of: (startPoint, endPoint), and: (firstLineSegment.p1, firstLineSegment.p2)) {
-                    allVertices.insert(intersection)
+                if let intersection = mathHelper.intersection(of: (startPoint, endPoint),
+                                                              and: (firstLineSegment.p1, firstLineSegment.p2)) {
+                    calculatedVertices.insert(intersection)
+                    
+                    _ = calculatedLineSegments.removeLast() // instead of the original segment we have 4 segments
+                    calculatedLineSegments.append((p1: intersection, p2: firstLineSegment.p1))
+                    calculatedLineSegments.append((p1: intersection, p2: firstLineSegment.p2))
+                    calculatedLineSegments.append((p1: intersection, p2: startPoint))
+                    calculatedLineSegments.append((p1: intersection, p2: endPoint))
                 }
             }
         }
-        
-        return allVertices
     }
 }
 
@@ -71,7 +84,7 @@ extension PlanarFaceFinderPresenter: PlanarFaceFinderPresenterInput {
         }
         lineSegments.append((startPoint, endPoint))
         drawLineSegments()
-
+        
         self.startPoint = nil
         self.endPoint = nil
     }
