@@ -99,10 +99,9 @@ class MathHelperTests: XCTestCase {
         let b: CGFloat = -4
         let c: CGFloat = 10
         
-        let solution: (CGFloat?, CGFloat?) = (nil, nil)
+        let solution = QuadraticEquationSolution.noSolution
         let calculatedSolution = mathHelper.solveQuadraticEquasion(a: a, b: b, c: c)
-        XCTAssertEqual(calculatedSolution.0, solution.0)
-        XCTAssertEqual(calculatedSolution.1, solution.1)
+        XCTAssertEqual(calculatedSolution, solution)
     }
     
     func test_solveQuadraticEquasion_oneSolution() {
@@ -110,10 +109,9 @@ class MathHelperTests: XCTestCase {
         let b: CGFloat = 4
         let c: CGFloat = 4
         
-        let solution: (CGFloat?, CGFloat?) = (-2, nil)
+        let solution = QuadraticEquationSolution.oneSolution(-2)
         let calculatedSolution = mathHelper.solveQuadraticEquasion(a: a, b: b, c: c)
-        XCTAssertEqual(calculatedSolution.0, solution.0)
-        XCTAssertEqual(calculatedSolution.1, solution.1)
+        XCTAssertEqual(calculatedSolution, solution)
     }
     
     func test_solveQuadraticEquasion_twoSolutions() {
@@ -121,9 +119,8 @@ class MathHelperTests: XCTestCase {
         let b: CGFloat = -3
         let c: CGFloat = -4
         
-        let solution: (CGFloat?, CGFloat?) = (-1, 4)
+        let solution = QuadraticEquationSolution.twoSolutions(-1, 4)
         let calculatedSolution = mathHelper.solveQuadraticEquasion(a: a, b: b, c: c)
-        XCTAssertEqual(calculatedSolution.0, solution.0)
-        XCTAssertEqual(calculatedSolution.1, solution.1)
+        XCTAssertEqual(calculatedSolution, solution)
     }
 }

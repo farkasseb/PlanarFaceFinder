@@ -10,6 +10,12 @@ enum PointsRelation: Equatable {
     case inLine
 }
 
+enum QuadraticEquationSolution: Equatable {
+    case twoSolutions(CGFloat, CGFloat)
+    case oneSolution(CGFloat)
+    case noSolution
+}
+
 enum LineSegmentCircleRelation {
     case intersects(CGPoint, CGPoint)
     case tangent(CGPoint)
@@ -25,7 +31,7 @@ protocol MathHelper {
     func calculateClockwiseRatio(of point1: CGPoint, and point2: CGPoint) -> CGFloat
     func determinePointsRelation(point1: CGPoint, point2: CGPoint) -> PointsRelation
     
-    func solveQuadraticEquasion(a: CGFloat, b: CGFloat, c: CGFloat) -> (CGFloat?, CGFloat?)
+    func solveQuadraticEquasion(a: CGFloat, b: CGFloat, c: CGFloat) -> QuadraticEquationSolution
 }
 
 final class MathHelperImplementation: MathHelper {
@@ -94,24 +100,22 @@ final class MathHelperImplementation: MathHelper {
         }
     }
     
-    func solveQuadraticEquasion(a: CGFloat, b: CGFloat, c: CGFloat) -> (CGFloat?, CGFloat?) {
+    func solveQuadraticEquasion(a: CGFloat, b: CGFloat, c: CGFloat) -> QuadraticEquationSolution {
         // b^2 - 4ac
         let discriminant = pow(b, 2) - (4 * a * c)
-        
-        if discriminant < 0 {
-            return (nil, nil)
-        }
-        
-        if discriminant < epsilon {
+        switch discriminant {
+        case _ where abs(discriminant - 0) < epsilon:
             // -b / 2a
             let solution: CGFloat = (-1 * b) / (2 * a)
-            return (solution, nil)
+            return QuadraticEquationSolution.oneSolution(solution)
+        case _ where discriminant < (0 - epsilon):
+            return QuadraticEquationSolution.noSolution
+        default:
+            // (-b - sqrt(discriminant)) / 2a
+            let solution1: CGFloat = ((-1 * b) - sqrt(discriminant)) / (2 * a)
+            // (-b + sqrt(discriminant)) / 2a
+            let solution2: CGFloat = ((-1 * b) + sqrt(discriminant)) / (2 * a)
+            return QuadraticEquationSolution.twoSolutions(solution1, solution2)
         }
-        
-        // (-b - sqrt(discriminant)) / 2a
-        let solution1: CGFloat = ((-1 * b) - sqrt(discriminant)) / (2 * a)
-        // (-b + sqrt(discriminant)) / 2a
-        let solution2: CGFloat = ((-1 * b) + sqrt(discriminant)) / (2 * a)
-        return (solution1, solution2)
     }
 }
