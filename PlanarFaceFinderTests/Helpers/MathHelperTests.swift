@@ -15,7 +15,7 @@ class MathHelperTests: XCTestCase {
         let line1 = (p1: CGPoint(x: 1, y: 1), p2: CGPoint(x: 3, y: 3))
         let line2 = (p1: CGPoint(x: 3, y: 1), p2: CGPoint(x: 5, y: 3))
         
-        XCTAssertNil(mathHelper.intersectionOfLineSegments(line1: line1, line2: line2))
+        XCTAssertNil(mathHelper.intersection(of: line1, and: line2))
     }
     
     func test_intersectionOfLineSegments_intersection() {
@@ -23,7 +23,7 @@ class MathHelperTests: XCTestCase {
         let line2 = (p1: CGPoint(x: 1, y: 3), p2: CGPoint(x: 3, y: 1))
         
         let intersectionPoint = CGPoint(x: 2, y: 2)
-        let calculatedIntersectionPoint = mathHelper.intersectionOfLineSegments(line1: line1, line2: line2)
+        let calculatedIntersectionPoint = mathHelper.intersection(of: line1, and: line2)
         XCTAssertNotNil(calculatedIntersectionPoint)
         XCTAssertEqual(calculatedIntersectionPoint!, intersectionPoint)
     }
@@ -94,4 +94,36 @@ class MathHelperTests: XCTestCase {
         XCTAssertEqual(mathHelper.calculateDistanceBetween(point1: point1, point2: point2), 5)
     }
     
+    func test_solveQuadraticEquasion_noSolutionOnReal() {
+        let a: CGFloat = 1
+        let b: CGFloat = -4
+        let c: CGFloat = 10
+        
+        let solution: (CGFloat?, CGFloat?) = (nil, nil)
+        let calculatedSolution = mathHelper.solveQuadraticEquasion(a: a, b: b, c: c)
+        XCTAssertEqual(calculatedSolution.0, solution.0)
+        XCTAssertEqual(calculatedSolution.1, solution.1)
+    }
+    
+    func test_solveQuadraticEquasion_oneSolution() {
+        let a: CGFloat = 1
+        let b: CGFloat = 4
+        let c: CGFloat = 4
+        
+        let solution: (CGFloat?, CGFloat?) = (-2, nil)
+        let calculatedSolution = mathHelper.solveQuadraticEquasion(a: a, b: b, c: c)
+        XCTAssertEqual(calculatedSolution.0, solution.0)
+        XCTAssertEqual(calculatedSolution.1, solution.1)
+    }
+    
+    func test_solveQuadraticEquasion_twoSolutions() {
+        let a: CGFloat = 1
+        let b: CGFloat = -3
+        let c: CGFloat = -4
+        
+        let solution: (CGFloat?, CGFloat?) = (-1, 4)
+        let calculatedSolution = mathHelper.solveQuadraticEquasion(a: a, b: b, c: c)
+        XCTAssertEqual(calculatedSolution.0, solution.0)
+        XCTAssertEqual(calculatedSolution.1, solution.1)
+    }
 }
