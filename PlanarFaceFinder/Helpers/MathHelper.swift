@@ -16,14 +16,31 @@ enum QuadraticEquationSolution: Equatable {
     case noSolution
 }
 
-enum LineSegmentCircleRelation {
-    case intersects(CGPoint, CGPoint)
-    case tangent(CGPoint)
-    case miss
+enum LineSegmentCircleRelation: Equatable {
+    case twoIntersections(CGPoint, CGPoint)
+    case oneIntersection(CGPoint)
+    case noIntersection
+    
+    static public func ==(lhs: LineSegmentCircleRelation, rhs: LineSegmentCircleRelation) -> Bool {
+        switch (lhs, rhs) {
+        case (.twoIntersections(let a, let b), .twoIntersections(let c, let d)):
+            let point1IsEqual = abs(a.x - c.x) < epsilon && abs(a.y - c.y) < epsilon
+            let point2IsEqual = abs(b.x - d.x) < epsilon && abs(b.y - d.y) < epsilon
+            return point1IsEqual && point2IsEqual
+        case (.oneIntersection(let a), .oneIntersection(let b)):
+            return abs(a.x - b.x) < epsilon && abs(a.y - b.y) < epsilon
+        case (.noIntersection, .noIntersection):
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 protocol MathHelper {
+    func isLineSegment(_ lineSegment: LineSegment, contains point: CGPoint) -> Bool
     func calculateDistanceBetween(point1: CGPoint, point2: CGPoint) -> CGFloat
+    func calculateYFor(m: CGFloat, x: CGFloat, c: CGFloat) -> CGFloat
     
     func intersection(of lineSegment: LineSegment, and circle: Circle) -> LineSegmentCircleRelation
     func intersection(of lineSegment1: LineSegment, and lineSegment2: LineSegment) -> CGPoint?
@@ -31,24 +48,89 @@ protocol MathHelper {
     func calculateClockwiseRatio(of point1: CGPoint, and point2: CGPoint) -> CGFloat
     func determinePointsRelation(point1: CGPoint, point2: CGPoint) -> PointsRelation
     
-    func solveQuadraticEquasion(a: CGFloat, b: CGFloat, c: CGFloat) -> QuadraticEquationSolution
+    func solveQuadraticEquasion(A: CGFloat, B: CGFloat, C: CGFloat) -> QuadraticEquationSolution
 }
 
 final class MathHelperImplementation: MathHelper {
+    func isLineSegment(_ lineSegment: LineSegment, contains point: CGPoint) -> Bool {
+        // p1 + t(p2 − p1)
+        let tXDenominator = lineSegment.p2.x - lineSegment.p1.x
+        let tYDenominator = lineSegment.p2.y - lineSegment.p1.y
+        guard tXDenominator != 0 && tYDenominator != 0 else {
+            return false
+        }
+        
+        let tX: CGFloat = (point.x - lineSegment.p1.x) / tXDenominator
+        let tY: CGFloat = (point.y - lineSegment.p1.y) / tYDenominator
+        
+        if (abs(tX - tY) > epsilon) || tX < 0 || tX > 1 || tY < 0 || tY > 1 {
+            return false
+        }
+        return true
+    }
+    
     func calculateDistanceBetween(point1: CGPoint, point2: CGPoint) -> CGFloat {
         return (pow((point1.x - point2.x), 2) + pow((point1.y - point2.y), 2)).squareRoot()
     }
     
+    func calculateYFor(m: CGFloat, x: CGFloat, c: CGFloat) -> CGFloat {
+        return m * x + c
+    }
+    
     // https://math.stackexchange.com/a/228855
+    // FIXME: what happens when we have a vertical line?
     func intersection(of lineSegment: LineSegment, and circle: Circle) -> LineSegmentCircleRelation {
+        // line segment: y = mx + c
+        // circle: (x − p)^2 + (y − q)^2 = r^2
+        
+        let mDenominator = lineSegment.p2.x - lineSegment.p1.x
+        guard mDenominator != 0 else {
+            return LineSegmentCircleRelation.noIntersection
+        }
+        
+        let p = circle.center.x
+        let q = circle.center.y
+        
         // m = (y2 - y1) / (x2 - x1)
+        let m = (lineSegment.p2.y - lineSegment.p1.y) / mDenominator
         // c = y1 - m * x1
+        let c = lineSegment.p1.y - m * lineSegment.p1.x
         
         // A: (m^2 + 1)
-        // B: (mc - mq - p)
+        let A: CGFloat = pow(m, 2) + 1
+        // B: 2(mc - mq - p)
+        let B: CGFloat = 2 * ((m * c) - (m * q) - p)
         // C: (q^2 − r^2 + p^2 − 2cq + c^2)
+        let C: CGFloat = pow(q, 2) - pow(circle.radius, 2) + pow(p, 2) - (2 * c * q) + pow(c, 2)
         
-        return LineSegmentCircleRelation.miss
+        switch solveQuadraticEquasion(A: A, B: B, C: C) {
+        case .twoSolutions(let intersection1X, let intersection2X):
+            let intersection1 = CGPoint(x: intersection1X, y: calculateYFor(m: m, x: intersection1X, c: c))
+            let intersection2 = CGPoint(x: intersection2X, y: calculateYFor(m: m, x: intersection2X, c: c))
+            print(intersection1, intersection2)
+            
+            switch (isLineSegment(lineSegment, contains: intersection1), isLineSegment(lineSegment, contains: intersection2)) {
+            case (true, true):
+                return LineSegmentCircleRelation.twoIntersections(intersection1, intersection2)
+            case (true, false):
+                return LineSegmentCircleRelation.oneIntersection(intersection1)
+            case (false, true):
+                return LineSegmentCircleRelation.oneIntersection(intersection2)
+            case (false, false):
+                return LineSegmentCircleRelation.noIntersection
+            }
+        case .oneSolution(let intersectionX):
+            let intersection = CGPoint(x: intersectionX, y: calculateYFor(m: m, x: intersectionX, c: c))
+            print(intersection)
+            
+            if isLineSegment(lineSegment, contains: intersection) {
+                return LineSegmentCircleRelation.oneIntersection(intersection)
+            } else {
+                return LineSegmentCircleRelation.noIntersection
+            }
+        case .noSolution:
+            return LineSegmentCircleRelation.noIntersection
+        }
     }
     
     // http://www.cs.swan.ac.uk/~cssimon/line_intersection.html
@@ -100,21 +182,21 @@ final class MathHelperImplementation: MathHelper {
         }
     }
     
-    func solveQuadraticEquasion(a: CGFloat, b: CGFloat, c: CGFloat) -> QuadraticEquationSolution {
-        // b^2 - 4ac
-        let discriminant = pow(b, 2) - (4 * a * c)
+    func solveQuadraticEquasion(A: CGFloat, B: CGFloat, C: CGFloat) -> QuadraticEquationSolution {
+        // B^2 - 4AC
+        let discriminant = pow(B, 2) - (4 * A * C)
         switch discriminant {
         case _ where abs(discriminant - 0) < epsilon:
-            // -b / 2a
-            let solution: CGFloat = (-1 * b) / (2 * a)
+            // -B / 2A
+            let solution: CGFloat = (-1 * B) / (2 * A)
             return QuadraticEquationSolution.oneSolution(solution)
         case _ where discriminant < (0 - epsilon):
             return QuadraticEquationSolution.noSolution
         default:
-            // (-b - sqrt(discriminant)) / 2a
-            let solution1: CGFloat = ((-1 * b) - sqrt(discriminant)) / (2 * a)
-            // (-b + sqrt(discriminant)) / 2a
-            let solution2: CGFloat = ((-1 * b) + sqrt(discriminant)) / (2 * a)
+            // (-B - sqrt(discriminant)) / 2A
+            let solution1: CGFloat = ((-1 * B) - sqrt(discriminant)) / (2 * A)
+            // (-B + sqrt(discriminant)) / 2A
+            let solution2: CGFloat = ((-1 * B) + sqrt(discriminant)) / (2 * A)
             return QuadraticEquationSolution.twoSolutions(solution1, solution2)
         }
     }
