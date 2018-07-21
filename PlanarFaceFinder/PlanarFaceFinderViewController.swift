@@ -12,6 +12,7 @@ final class PlanarFaceFinderViewController: UIViewController {
     var presenter: PlanarFaceFinderPresenterInput?
     
     private var canvas: UIImageView?
+    private var clearCanvasButton: UIButton?
     
     private let strokeColor = UIColor(red: 0.35, green: 0.51, blue: 0.55, alpha: 1)
     private let fillColor = UIColor(red: 0.8, green: 0.89, blue: 0.95, alpha: 1)
@@ -20,12 +21,19 @@ final class PlanarFaceFinderViewController: UIViewController {
         super.viewDidLoad()
         
         customizeViews()
+        localizeViews()
     }
     
     private func customizeViews() {
-        view.backgroundColor = .white
+        view.tintColor = .blue
         
+        createCanvas()
+        createClearButton()
+    }
+    
+    private func createCanvas() {
         let canvas = UIImageView()
+        canvas.backgroundColor = .white
         canvas.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(canvas)
         NSLayoutConstraint.activate([
@@ -33,8 +41,27 @@ final class PlanarFaceFinderViewController: UIViewController {
             canvas.topAnchor.constraint(equalTo: view.topAnchor),
             canvas.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             canvas.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+            ])
         self.canvas = canvas
+    }
+    
+    private func createClearButton() {
+        let clearCanvasButton = UIButton()
+        clearCanvasButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(clearCanvasButton)
+        NSLayoutConstraint.activate([
+            clearCanvasButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            clearCanvasButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16)
+            ])
+        clearCanvasButton.setTitleColor(.blue, for: .normal)
+        clearCanvasButton.addTarget(self,
+                                    action: #selector(PlanarFaceFinderViewController.clearCanvasButtonTouchUpInside),
+                                    for: .touchUpInside)
+        self.clearCanvasButton = clearCanvasButton
+    }
+    
+    private func localizeViews() {
+        clearCanvasButton?.setTitle(NSLocalizedString("planar_face_finder.clear_button_text", comment: ""), for: .normal)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -51,6 +78,10 @@ final class PlanarFaceFinderViewController: UIViewController {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         presenter?.drawingFinished()
+    }
+    
+    @objc private func clearCanvasButtonTouchUpInside() {
+        presenter?.clearCanvasButtonTouchUpInside()
     }
 }
 

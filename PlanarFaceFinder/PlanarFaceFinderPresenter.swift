@@ -6,6 +6,8 @@ protocol PlanarFaceFinderPresenterInput: class {
     func drawingStarted(from startPoint: CGPoint)
     func drawingMoved(to endPoint: CGPoint)
     func drawingFinished()
+    
+    func clearCanvasButtonTouchUpInside()
 }
 
 final class PlanarFaceFinderPresenter {
@@ -48,5 +50,10 @@ extension PlanarFaceFinderPresenter: PlanarFaceFinderPresenterInput {
 
         self.startPoint = nil
         self.endPoint = nil
+    }
+    
+    func clearCanvasButtonTouchUpInside() {
+        lineSegments.removeAll()
+        view?.clearCanvas()
     }
 }

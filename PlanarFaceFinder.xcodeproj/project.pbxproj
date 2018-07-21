@@ -14,6 +14,7 @@
 		C53F637921028E5F009F023C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C53F637721028E5F009F023C /* LaunchScreen.storyboard */; };
 		C53F638421028E60009F023C /* PlanarFaceFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F638321028E60009F023C /* PlanarFaceFinderTests.swift */; };
 		C53F639021028F04009F023C /* MathHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F638F21028F04009F023C /* MathHelper.swift */; };
+		C569AF572103753200E4DCA7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C569AF562103753200E4DCA7 /* Localizable.strings */; };
 		C581F5D8210360E50044ED56 /* PlanarFaceFinderPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C581F5D7210360E50044ED56 /* PlanarFaceFinderPresenter.swift */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +40,7 @@
 		C53F638321028E60009F023C /* PlanarFaceFinderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanarFaceFinderTests.swift; sourceTree = "<group>"; };
 		C53F638521028E60009F023C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C53F638F21028F04009F023C /* MathHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathHelper.swift; sourceTree = "<group>"; };
+		C569AF562103753200E4DCA7 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		C581F5D7210360E50044ED56 /* PlanarFaceFinderPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanarFaceFinderPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -96,6 +98,7 @@
 				C53F637521028E5F009F023C /* Assets.xcassets */,
 				C53F637721028E5F009F023C /* LaunchScreen.storyboard */,
 				C53F637A21028E5F009F023C /* Info.plist */,
+				C569AF562103753200E4DCA7 /* Localizable.strings */,
 			);
 			path = PlanarFaceFinder;
 			sourceTree = "<group>";
@@ -200,6 +203,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C53F637921028E5F009F023C /* LaunchScreen.storyboard in Resources */,
+				C569AF572103753200E4DCA7 /* Localizable.strings in Resources */,
 				C53F637621028E5F009F023C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
