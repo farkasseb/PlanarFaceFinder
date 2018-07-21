@@ -21,6 +21,7 @@ final class PlanarFaceFinderPresenter {
         lineSegments.forEach { startPoint, endPoint in
             view?.drawLine(from: startPoint, to: endPoint)
         }
+        view?.fillAreaEnclosedBy(points: [CGPoint(x: 0, y: 0), CGPoint(x: 100, y: 0), CGPoint(x: 100, y: 100), CGPoint(x: 0, y: 100)])
     }
 }
 

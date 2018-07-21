@@ -5,12 +5,16 @@ protocol PlanarFaceFinderView: class {
     
     func clearCanvas()
     func drawLine(from startPoint: CGPoint, to endPoint: CGPoint)
+    func fillAreaEnclosedBy(points: [CGPoint])
 }
 
 final class PlanarFaceFinderViewController: UIViewController {
     var presenter: PlanarFaceFinderPresenterInput?
     
     private var canvas: UIImageView?
+    
+    private let strokeColor = UIColor(red: 0.35, green: 0.51, blue: 0.55, alpha: 1)
+    private let fillColor = UIColor(red: 0.8, green: 0.89, blue: 0.95, alpha: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +56,7 @@ final class PlanarFaceFinderViewController: UIViewController {
 
 extension PlanarFaceFinderViewController: PlanarFaceFinderView {
     func clearCanvas() {
+        canvas?.layer.sublayers?.filter({ $0 is CAShapeLayer }).forEach({ $0.removeFromSuperlayer() })
         canvas?.image = nil
     }
     
@@ -64,12 +69,32 @@ extension PlanarFaceFinderViewController: PlanarFaceFinderView {
         context?.addLine(to: endPoint)
         
         context?.setLineWidth(3)
-        context?.setStrokeColor(UIColor.black.cgColor)
+        context?.setStrokeColor(strokeColor.cgColor)
         context?.setBlendMode(.normal)
         
         context?.strokePath()
         
         canvas?.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
+    }
+    
+    func fillAreaEnclosedBy(points: [CGPoint]) {
+        guard points.count > 3, let firstPoint = points.first else {
+            return
+        }
+        
+        let bezierPath = UIBezierPath()
+        bezierPath.move(to: firstPoint)
+        points[1 ..< points.count].forEach { point in
+            bezierPath.addLine(to: point)
+        }
+        bezierPath.addLine(to: firstPoint)
+        bezierPath.close()
+        
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = bezierPath.cgPath
+        shapeLayer.fillColor = fillColor.cgColor
+        
+        canvas?.layer.addSublayer(shapeLayer)
     }
 }
