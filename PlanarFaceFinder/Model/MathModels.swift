@@ -9,12 +9,16 @@ class Point: Equatable, Hashable, CustomStringConvertible {
     var lineSegment: LineSegment?
     
     var description: String {
-        return "x: \(x), y: \(y), tag: \(String(describing: tag))"
+        var description = "x: \(x), y: \(y)"
+        if let tag = tag {
+            description += ", tag: \(tag)"
+        }
+        return description
     }
     
     init(x: CGFloat, y: CGFloat, lineSegment: LineSegment? = nil) {
-        self.x = x.rounded()
-        self.y = y.rounded()
+        self.x = x
+        self.y = y
         self.lineSegment = lineSegment
     }
     
@@ -62,12 +66,6 @@ class LineSegment: Equatable, Hashable {
     public var hashValue: Int {
         return startPoint.hashValue << 32 ^ endPoint.hashValue
     }
-}
-
-enum PointsRelation: Equatable {
-    case clockwise(CGFloat)
-    case counterClockwise(CGFloat)
-    case inLine
 }
 
 enum QuadraticEquationSolution: Equatable {

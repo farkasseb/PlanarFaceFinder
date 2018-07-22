@@ -119,7 +119,7 @@ extension PlanarFaceFinderViewController: PlanarFaceFinderView {
     }
     
     func fillAreaEnclosedBy(points: [CGPoint]) {
-        guard points.count > 3, let firstPoint = points.first else {
+        guard points.count >= 3, let firstPoint = points.first else {
             return
         }
         
@@ -128,7 +128,6 @@ extension PlanarFaceFinderViewController: PlanarFaceFinderView {
         points[1 ..< points.count].forEach { point in
             bezierPath.addLine(to: point)
         }
-        bezierPath.addLine(to: firstPoint)
         bezierPath.close()
         
         let shapeLayer = CAShapeLayer()

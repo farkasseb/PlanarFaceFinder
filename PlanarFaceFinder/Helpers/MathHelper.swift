@@ -8,8 +8,8 @@ protocol MathHelper {
     func intersection(of lineSegment: LineSegment, and circle: Circle) -> LineSegmentCircleRelation
     func intersection(of lineSegment1: LineSegment, and lineSegment2: LineSegment) -> Point?
     
-    func calculateClockwiseRatio(of point1: Point, and point2: Point) -> CGFloat
-    func determinePointsRelation(point1: Point, point2: Point) -> PointsRelation
+    func orderPointsClockwiseDirection(points: [Point], from center: Point) -> [Point]
+    func chooseClosestClockwisePoint(to point: Point, from points: [Point], with center: Point) -> Point?
     
     func solveQuadraticEquasion(A: CGFloat, B: CGFloat, C: CGFloat) -> QuadraticEquationSolution
 }
@@ -17,20 +17,29 @@ protocol MathHelper {
 final class MathHelperImplementation: MathHelper {
     static let sharedInstance = MathHelperImplementation()
     
+    // https://stackoverflow.com/a/328122/3503324
     func isLineSegment(_ lineSegment: LineSegment, contains point: Point) -> Bool {
-        // p1 + t(p2 − p1)
-        let tXDenominator = lineSegment.endPoint.x - lineSegment.startPoint.x
-        let tYDenominator = lineSegment.endPoint.y - lineSegment.startPoint.y
-        guard tXDenominator != 0 && tYDenominator != 0 else {
+        // a - lineSegment.startPoint
+        // b - lineSegment.endPoint
+        // c - point
+    
+        // (c.y - a.y) * (b.x - a.x) - (c.x - a.x) * (b.y - a.y)
+        let crossProduct: CGFloat = (point.y - lineSegment.startPoint.y) * (lineSegment.endPoint.x - lineSegment.startPoint.x) - (point.x - lineSegment.startPoint.x) * (lineSegment.endPoint.y - lineSegment.startPoint.y)
+        if abs(crossProduct) > epsilon {
             return false
         }
         
-        let tX: CGFloat = (point.x - lineSegment.startPoint.x) / tXDenominator
-        let tY: CGFloat = (point.y - lineSegment.startPoint.y) / tYDenominator
-        
-        if (abs(tX - tY) > epsilon) || tX < 0 || tX > 1 || tY < 0 || tY > 1 {
+        // (c.x - a.x) * (b.x - a.x) + (c.y - a.y)*(b.y - a.y)
+        let dotProduct: CGFloat = (point.x - lineSegment.startPoint.x) * (lineSegment.endPoint.x - lineSegment.startPoint.x) + (point.y - lineSegment.startPoint.y) * (lineSegment.endPoint.y - lineSegment.startPoint.y)
+        if dotProduct < 0 {
             return false
         }
+        
+        let squaredLength = pow(calculateDistanceBetween(point1: lineSegment.startPoint, point2: lineSegment.endPoint), 2)
+        if dotProduct > squaredLength {
+            return false
+        }
+        
         return true
     }
     
@@ -127,22 +136,58 @@ final class MathHelperImplementation: MathHelper {
         }
     }
     
-    // https://stackoverflow.com/a/1165943/3503324
-    func calculateClockwiseRatio(of point1: Point, and point2: Point) -> CGFloat {
-        // (x2 − x1)(y2 + y1)
-        return (point2.x - point1.x) * (point2.y + point1.y)
+    // https://stackoverflow.com/a/6989383/3503324
+    func orderPointsClockwiseDirection(points: [Point], from center: Point) -> [Point] {
+        return points.sorted { a, b in
+            if a.x - center.x >= 0 && b.x - center.x < 0 {
+                return true
+            }
+            
+            if a.x - center.x < 0 && b.x - center.x >= 0 {
+                return false
+            }
+            
+            if a.x - center.x == 0 && b.x - center.x == 0 {
+                if (a.y - center.y >= 0 || b.y - center.y >= 0) {
+                    return a.y > b.y
+                }
+                return b.y > a.y
+            }
+            
+            // compute the cross product of vectors (center -> a) x (center -> b)
+            let det = (a.x - center.x) * (b.y - center.y) - (b.x - center.x) * (a.y - center.y)
+            if (det < 0) {
+                return true
+            }
+            
+            if (det > 0) {
+                return false
+            }
+            
+            // points a and b are on the same line from the center
+            // check which point is closer to the center
+            let d1 = (a.x - center.x) * (a.x - center.x) + (a.y - center.y) * (a.y - center.y)
+            let d2 = (b.x - center.x) * (b.x - center.x) + (b.y - center.y) * (b.y - center.y)
+            return d1 > d2
+        }.reversed() // Cartesian --> iOS coordinate system
     }
-    
-    func determinePointsRelation(point1: Point, point2: Point) -> PointsRelation {
-        let ratio = calculateClockwiseRatio(of: point1, and: point2)
-        switch ratio {
-        case let clockwiseRatio where ratio > 0:
-            return PointsRelation.clockwise(clockwiseRatio)
-        case let counterClockwiseRatio where ratio < 0:
-            return PointsRelation.counterClockwise(counterClockwiseRatio)
-        default:
-            return PointsRelation.inLine
+
+    func chooseClosestClockwisePoint(to point: Point, from points: [Point], with center: Point) -> Point? {
+        if points.count < 2 {
+            return nil
         }
+        
+        let orderedPoints = orderPointsClockwiseDirection(points: points, from: center)
+        if let indexOfOriginalPoint = orderedPoints.firstIndex(of: point) {
+            switch indexOfOriginalPoint {
+            case orderedPoints.count - 1:
+                return orderedPoints.first
+            default:
+                return orderedPoints[safe: orderedPoints.index(after: indexOfOriginalPoint)]
+            }
+        }
+        
+        return nil
     }
     
     func solveQuadraticEquasion(A: CGFloat, B: CGFloat, C: CGFloat) -> QuadraticEquationSolution {

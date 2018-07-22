@@ -8,11 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		C51366462102906F00EB681A /* MathHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51366452102906F00EB681A /* MathHelperTests.swift */; };
+		C53B2F0C21053B7B00584BD1 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53B2F0B21053B7B00584BD1 /* Extension.swift */; };
 		C53F636F21028E5D009F023C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F636E21028E5D009F023C /* AppDelegate.swift */; };
 		C53F637121028E5D009F023C /* PlanarFaceFinderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F637021028E5D009F023C /* PlanarFaceFinderViewController.swift */; };
 		C53F637621028E5F009F023C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C53F637521028E5F009F023C /* Assets.xcassets */; };
 		C53F637921028E5F009F023C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C53F637721028E5F009F023C /* LaunchScreen.storyboard */; };
-		C53F638421028E60009F023C /* PlanarFaceFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F638321028E60009F023C /* PlanarFaceFinderTests.swift */; };
+		C53F638421028E60009F023C /* PlanarFaceFinderPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F638321028E60009F023C /* PlanarFaceFinderPresenterTests.swift */; };
 		C53F639021028F04009F023C /* MathHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F638F21028F04009F023C /* MathHelper.swift */; };
 		C569AF572103753200E4DCA7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C569AF562103753200E4DCA7 /* Localizable.strings */; };
 		C580E5EF2104CA810021F108 /* MathModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C580E5EE2104CA810021F108 /* MathModels.swift */; };
@@ -31,6 +32,7 @@
 
 /* Begin PBXFileReference section */
 		C51366452102906F00EB681A /* MathHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathHelperTests.swift; sourceTree = "<group>"; };
+		C53B2F0B21053B7B00584BD1 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		C53F636B21028E5D009F023C /* PlanarFaceFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlanarFaceFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C53F636E21028E5D009F023C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C53F637021028E5D009F023C /* PlanarFaceFinderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanarFaceFinderViewController.swift; sourceTree = "<group>"; };
@@ -38,7 +40,7 @@
 		C53F637821028E5F009F023C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C53F637A21028E5F009F023C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C53F637F21028E60009F023C /* PlanarFaceFinderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlanarFaceFinderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C53F638321028E60009F023C /* PlanarFaceFinderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanarFaceFinderTests.swift; sourceTree = "<group>"; };
+		C53F638321028E60009F023C /* PlanarFaceFinderPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanarFaceFinderPresenterTests.swift; sourceTree = "<group>"; };
 		C53F638521028E60009F023C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C53F638F21028F04009F023C /* MathHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathHelper.swift; sourceTree = "<group>"; };
 		C569AF562103753200E4DCA7 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
@@ -110,7 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				C51366442102905900EB681A /* Helpers */,
-				C53F638321028E60009F023C /* PlanarFaceFinderTests.swift */,
+				C53F638321028E60009F023C /* PlanarFaceFinderPresenterTests.swift */,
 				C53F638521028E60009F023C /* Info.plist */,
 			);
 			path = PlanarFaceFinderTests;
@@ -128,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				C580E5EE2104CA810021F108 /* MathModels.swift */,
+				C53B2F0B21053B7B00584BD1 /* Extension.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -236,6 +239,7 @@
 				C53F639021028F04009F023C /* MathHelper.swift in Sources */,
 				C53F637121028E5D009F023C /* PlanarFaceFinderViewController.swift in Sources */,
 				C53F636F21028E5D009F023C /* AppDelegate.swift in Sources */,
+				C53B2F0C21053B7B00584BD1 /* Extension.swift in Sources */,
 				C581F5D8210360E50044ED56 /* PlanarFaceFinderPresenter.swift in Sources */,
 				C580E5EF2104CA810021F108 /* MathModels.swift in Sources */,
 			);
@@ -245,7 +249,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C53F638421028E60009F023C /* PlanarFaceFinderTests.swift in Sources */,
+				C53F638421028E60009F023C /* PlanarFaceFinderPresenterTests.swift in Sources */,
 				C51366462102906F00EB681A /* MathHelperTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

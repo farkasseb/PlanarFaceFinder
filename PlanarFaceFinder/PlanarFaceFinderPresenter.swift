@@ -18,19 +18,25 @@ final class PlanarFaceFinderPresenter {
     private var calculatedVertices = Set<Point>()
     private var calculatedTVertices = Set<Point>()
     private var calculatedLineSegments = Set<LineSegment>()
-    private var calculatedFaces = [[Point]]()
+    private var calculatedFaces = [Set<Point>]()
     
     private var startPoint: Point?
     private var endPoint: Point?
     
     private func draw() {
         view?.clearCanvas()
-        
-        calculatedVertices.forEach { vertice in
-            view?.drawCircle(at: CGPoint(from: vertice), radius: 4, color: .blue)
+
+        calculatedFaces.forEach { points in
+            let center = Point(x: points.reduce(0) { $0 + $1.x }, y: points.reduce(0) { $0 + $1.y })
+            let orderedPoints = mathHelper.orderPointsClockwiseDirection(points: Array(points), from: center)
+            view?.fillAreaEnclosedBy(points: orderedPoints.map({ CGPoint(x: $0.x, y: $0.y )}))
         }
+        
         calculatedLineSegments.forEach { lineSegment in
             view?.drawLine(from: CGPoint(from: lineSegment.startPoint), to: CGPoint(from: lineSegment.endPoint))
+        }
+        calculatedVertices.forEach { vertice in
+            view?.drawCircle(at: CGPoint(from: vertice), radius: 4, color: .blue)
         }
         calculatedTVertices.forEach { vertice in
             let color: UIColor = vertice.tag == nil ? .red : .yellow
@@ -88,16 +94,15 @@ final class PlanarFaceFinderPresenter {
         
         var tag = 1
         calculatedVertices.forEach { originalVertex in
-            var possibleFace = [Point]()
-            
-            possibleFace.append(originalVertex)
-            if var selectedLineSegment = calculatedLineSegments.filter({ $0.startPoint == originalVertex || $0.endPoint == originalVertex }).first {
-                
+            calculatedLineSegments.filter({ $0.startPoint == originalVertex || $0.endPoint == originalVertex }).forEach({ selectedLineSegment in
+                var possibleFace = Set<Point>()
+                possibleFace.insert(originalVertex)
+
                 if var nextVertex = findNextVertex(selectedLineSegment: selectedLineSegment, selectedVertex: originalVertex, tag: tag) {
-                    possibleFace.append(nextVertex)
+                    possibleFace.insert(nextVertex)
                     while nextVertex != originalVertex {
-                        selectedLineSegment = nextVertex.lineSegment!
-                        if let possibleNextVertex = findNextVertex(selectedLineSegment: selectedLineSegment, selectedVertex: nextVertex, tag: tag) {
+                        if let possibleNextVertex = findNextVertex(selectedLineSegment: nextVertex.lineSegment!, selectedVertex: nextVertex, tag: tag) {
+                            possibleFace.insert(nextVertex)
                             nextVertex = possibleNextVertex
                         } else {
                             break
@@ -109,14 +114,15 @@ final class PlanarFaceFinderPresenter {
                     }
                 }
                 tag += 1
-            }
-            print("possibleFace: \(possibleFace)")
+                print("possibleFace: \(possibleFace)")
+            })
         }
+        
         print("Found faces: \(calculatedFaces)")
     }
     
     private func findNextVertex(selectedLineSegment: LineSegment, selectedVertex: Point, tag: Int) -> Point? {
-        let closestTVertex = findClosestTVertex(from: selectedVertex, on: selectedLineSegment)!
+        let closestTVertex = findClosestTVertex(from: calculatedTVertices, for: selectedVertex, on: selectedLineSegment)
         
         if closestTVertex.tag != nil {
             return nil
@@ -125,37 +131,32 @@ final class PlanarFaceFinderPresenter {
         closestTVertex.tag = tag
         let closestTVertexDistance = mathHelper.calculateDistanceBetween(point1: selectedVertex, point2: closestTVertex)
         
-        let possibleLineSegments = calculatedLineSegments.filter({ ($0.startPoint == selectedVertex || $0.endPoint == selectedVertex) && $0 != selectedLineSegment })
-        if possibleLineSegments.isEmpty {
+        let relatedLineSegments = calculatedLineSegments.filter({ ($0.startPoint == selectedVertex || $0.endPoint == selectedVertex) })
+        if relatedLineSegments.filter({ $0 != selectedLineSegment }).isEmpty {
             return nil
         }
         
         let circleToSwipe = Circle(center: selectedVertex, radius: closestTVertexDistance)
-        guard let closestClockwiseIntersectionPoint = findClosestClockwiseIntersectionPoint(to: closestTVertex, on: possibleLineSegments, with: circleToSwipe) else {
+        
+        let closestClockwiseIntersectionPoint = findClosestClockwiseIntersectionPoint(to: closestTVertex, on: relatedLineSegments, with: circleToSwipe)
+        guard let nextLineSegment = closestClockwiseIntersectionPoint?.lineSegment else {
             return nil
         }
-        
-        let nextLineSegment = closestClockwiseIntersectionPoint.lineSegment!
         let nextVertex = nextLineSegment.startPoint == selectedVertex ? nextLineSegment.endPoint : nextLineSegment.startPoint
         
         nextVertex.lineSegment = nextLineSegment
         return nextVertex
     }
     
-    private func findClosestTVertex(from vertex: Point, on edge: LineSegment) -> Point? {
-        return calculatedTVertices.filter({
-            guard let associatedEdge = $0.lineSegment else {
-                return false
-            }
-            return associatedEdge == edge
-        }).min(by: { p1, p2 in
+    func findClosestTVertex(from tVertices: Set<Point>, for vertex: Point, on edge: LineSegment) -> Point {
+        return tVertices.filter({ edge == $0.lineSegment! }).min(by: { p1, p2 in
             let p1DistanceFromVertice = mathHelper.calculateDistanceBetween(point1: vertex, point2: p1)
             let p2DistanceFromVertice = mathHelper.calculateDistanceBetween(point1: vertex, point2: p2)
             return p1DistanceFromVertice < p2DistanceFromVertice
-        })
+        })!
     }
     
-    private func findClosestClockwiseIntersectionPoint(to vertex: Point, on lineSegments: Set<LineSegment>, with circle: Circle) -> Point? {
+    func findClosestClockwiseIntersectionPoint(to vertex: Point, on lineSegments: Set<LineSegment>, with circle: Circle) -> Point? {
         var intersectionPoints = Set<Point>()
         lineSegments.forEach({ lineSegment in
             if let intersection = intersectionPoint(lineSegment: lineSegment, circle: circle) {
@@ -164,17 +165,8 @@ final class PlanarFaceFinderPresenter {
             }
         })
         
-        if intersectionPoints.count == 1 {
-            return intersectionPoints.removeFirst()
-        } else if let closestClockwiseIntersectionPoint = intersectionPoints.min(by: { p1, p2 in
-            let p1ClockwiseRatio = mathHelper.calculateClockwiseRatio(of: vertex, and: p1)
-            let p2ClockwiseRatio = mathHelper.calculateClockwiseRatio(of: vertex, and: p2)
-            return p1ClockwiseRatio < p2ClockwiseRatio // non-Cartesian coordinate system
-        }) {
-            return closestClockwiseIntersectionPoint
-        }
-        
-        return nil
+        intersectionPoints.insert(vertex)
+        return mathHelper.chooseClosestClockwisePoint(to: vertex, from: Array(intersectionPoints), with: circle.center)
     }
     
     private func intersectionPoint(lineSegment: LineSegment, circle: Circle) -> Point? {
@@ -184,7 +176,7 @@ final class PlanarFaceFinderPresenter {
         case .noIntersection:
             return nil
         case .twoIntersections(_, _):
-            fatalError("It should be impossible in this context.")
+            fatalError("Impossible.")
         }
     }
 }
@@ -220,6 +212,7 @@ extension PlanarFaceFinderPresenter: PlanarFaceFinderPresenterInput {
         calculatedVertices.removeAll()
         calculatedTVertices.removeAll()
         calculatedLineSegments.removeAll()
+        calculatedFaces.removeAll()
         view?.clearCanvas()
     }
 }

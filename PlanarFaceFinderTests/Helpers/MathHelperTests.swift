@@ -148,52 +148,33 @@ class MathHelperTests: XCTestCase {
         XCTAssertEqual(calculatedIntersectionPoint!, intersectionPoint)
     }
     
-    // MARK: calculateClockwiseRatio
+    // MARK: orderPointsClockwiseDirection
     
-    func test_calculateClockwiseRatio_clockwise() {
-        let point1 = Point(x: 3, y: 3)
-        let point2 = Point(x: 6, y: 0)
+    func test_orderPointsClockwiseDirection_example1() {
+        let point1 = Point(x: 172, y: 164)
+        let point2 = Point(x: 188, y: 124)
+        let point3 = Point(x: 169, y: 126)
         
-        XCTAssertGreaterThan(mathHelper.calculateClockwiseRatio(of: point1, and: point2), 0)
+        let center = Point(x: 191, y: 163)
+        XCTAssertEqual(mathHelper.orderPointsClockwiseDirection(points: [point1, point2, point3], from: center), [point1, point3, point2])
     }
     
-    func test_calculateClockwiseRatio_counterClockwise() {
-        let point1 = Point(x: 6, y: 0)
-        let point2 = Point(x: 3, y: 3)
+    // MARK: chooseClosestClockwisePoint
+
+    func test_chooseClosestClockwisePoint_chooseTheOnlyOne() {
+        let solution = Point(x: 1, y: 1)
         
-        XCTAssertLessThan(mathHelper.calculateClockwiseRatio(of: point1, and: point2), 0)
+        let whateverPoint = Point(x: 0, y: 0)
+        XCTAssertEqual(mathHelper.chooseClosestClockwisePoint(to: whateverPoint, from: [solution, whateverPoint], with: whateverPoint), solution)
     }
     
-    func test_calculateClockwiseRatio_inLine() {
-        let point1 = Point(x: 0, y: 0)
-        let point2 = Point(x: 3, y: 0)
+    func test_chooseClosestClockwisePoint_example1() {
+        let point1 = Point(x: 172, y: 164)
+        let point2 = Point(x: 188, y: 124)
+        let solution = Point(x: 169, y: 126)
         
-        XCTAssertEqual(mathHelper.calculateClockwiseRatio(of: point1, and: point2), 0)
-    }
-    
-    // MARK: determinePointsRelation
-    
-    func test_determinePointsRelation_clockwise() {
-        let point1 = Point(x: 3, y: 3)
-        let point2 = Point(x: 6, y: 0)
-        
-        let ratio = mathHelper.calculateClockwiseRatio(of: point1, and: point2)
-        XCTAssertEqual(mathHelper.determinePointsRelation(point1: point1, point2: point2), PointsRelation.clockwise(ratio))
-    }
-    
-    func test_determinePointsRelation_counterClockwise() {
-        let point1 = Point(x: 6, y: 0)
-        let point2 = Point(x: 3, y: 3)
-        
-        let ratio = mathHelper.calculateClockwiseRatio(of: point1, and: point2)
-        XCTAssertEqual(mathHelper.determinePointsRelation(point1: point1, point2: point2), PointsRelation.counterClockwise(ratio))
-    }
-    
-    func test_determinePointsRelation_inLine() {
-        let point1 = Point(x: 0, y: 0)
-        let point2 = Point(x: 3, y: 0)
-        
-        XCTAssertEqual(mathHelper.determinePointsRelation(point1: point1, point2: point2), PointsRelation.inLine)
+        let center = Point(x: 191, y: 163)
+        XCTAssertEqual(mathHelper.chooseClosestClockwisePoint(to: point1, from: [solution, point1, point2], with: center), solution)
     }
     
     // MARK: solveQuadraticEquasion
