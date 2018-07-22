@@ -91,7 +91,7 @@ extension PlanarFaceFinderViewController: PlanarFaceFinderView {
         canvas?.layer.sublayers?.filter({ $0 is CAShapeLayer }).forEach({ $0.removeFromSuperlayer() })
         canvas?.image = nil
     }
-
+    
     func drawCircle(at point: CGPoint, radius: CGFloat, color: UIColor) {
         let bezierPath = UIBezierPath(arcCenter: point, radius: radius, startAngle: 0, endAngle: 360, clockwise: true)
         let shapeLayer = CAShapeLayer()
@@ -101,21 +101,15 @@ extension PlanarFaceFinderViewController: PlanarFaceFinderView {
     }
     
     func drawLine(from startPoint: CGPoint, to endPoint: CGPoint) {
-        UIGraphicsBeginImageContext(view.frame.size)
-        let context = UIGraphicsGetCurrentContext()
-        canvas?.image?.draw(in: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height))
+        let bezierPath = UIBezierPath()
+        bezierPath.move(to: startPoint)
+        bezierPath.addLine(to: endPoint)
         
-        context?.move(to: startPoint)
-        context?.addLine(to: endPoint)
-        
-        context?.setLineWidth(3)
-        context?.setStrokeColor(strokeColor.cgColor)
-        context?.setBlendMode(.normal)
-        
-        context?.strokePath()
-        
-        canvas?.image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = bezierPath.cgPath
+        shapeLayer.strokeColor = strokeColor.cgColor
+        shapeLayer.lineWidth = 3
+        canvas?.layer.addSublayer(shapeLayer)
     }
     
     func fillAreaEnclosedBy(points: [CGPoint]) {

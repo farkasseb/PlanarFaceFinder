@@ -25,7 +25,7 @@ final class PlanarFaceFinderPresenter {
     
     private func draw() {
         view?.clearCanvas()
-
+        
         calculatedFaces.forEach { points in
             let center = Point(x: (points.reduce(0) { $0 + $1.x }) / CGFloat(points.count), y: (points.reduce(0) { $0 + $1.y }) / CGFloat(points.count))
             let orderedPoints = mathHelper.orderPointsClockwiseDirection(points: Array(points), from: center)
@@ -52,7 +52,11 @@ final class PlanarFaceFinderPresenter {
         calculatedLineSegments.forEach { currentLineSegment in
             if let intersection = mathHelper.intersection(of: currentLineSegment, and: lineSegment), !calculatedVertices.contains(intersection) {
                 intersects = true
-                calculatedVertices.insert(intersection)
+                
+                calculatedVertices.remove(lineSegment.startPoint)
+                calculatedVertices.remove(lineSegment.endPoint)
+                calculatedVertices.remove(currentLineSegment.startPoint)
+                calculatedVertices.remove(currentLineSegment.endPoint)
                 
                 calculatedLineSegments.remove(currentLineSegment)
                 let newLineSegments = [
@@ -97,7 +101,7 @@ final class PlanarFaceFinderPresenter {
             calculatedLineSegments.filter({ $0.startPoint == originalVertex || $0.endPoint == originalVertex }).forEach({ selectedLineSegment in
                 var possibleFace = Set<Point>()
                 possibleFace.insert(originalVertex)
-
+                
                 if var nextVertex = findNextVertex(selectedLineSegment: selectedLineSegment, selectedVertex: originalVertex, tag: tag) {
                     possibleFace.insert(nextVertex)
                     while nextVertex != originalVertex {
@@ -114,11 +118,12 @@ final class PlanarFaceFinderPresenter {
                     }
                 }
                 tag += 1
-                print("possibleFace: \(possibleFace)")
+                // DEBUG
+                // print("possibleFace: \(possibleFace)")
             })
         }
-        
-        print("Found faces: \(calculatedFaces)")
+        // DEBUG
+        // print("Found faces: \(calculatedFaces)")
     }
     
     private func findNextVertex(selectedLineSegment: LineSegment, selectedVertex: Point, tag: Int) -> Point? {

@@ -52,7 +52,7 @@ final class MathHelperImplementation: MathHelper {
     }
     
     // https://math.stackexchange.com/a/228855
-    // FIXME: what happens when we have a vertical line?
+    // FIXME: what happens when we have a vertical line? --> should reimplement with vector projection
     func intersection(of lineSegment: LineSegment, and circle: Circle) -> LineSegmentCircleRelation {
         // line segment: y = mx + c
         // circle: (x − p)^2 + (y − q)^2 = r^2
