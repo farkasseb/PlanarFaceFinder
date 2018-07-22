@@ -26,13 +26,13 @@ final class PlanarFaceFinderPresenter {
         view?.clearCanvas()
         
         calculatedVertices.forEach { vertice in
-            view?.drawCircle(at: CGPoint(from: vertice), with: .blue)
+            view?.drawCircle(at: CGPoint(from: vertice), radius: 4, color: .blue)
         }
         calculatedLineSegments.forEach { lineSegment in
             view?.drawLine(from: CGPoint(from: lineSegment.startPoint), to: CGPoint(from: lineSegment.endPoint))
         }
         calculatedTVertices.forEach { vertice in
-            view?.drawCircle(at: CGPoint(from: vertice), with: .yellow)
+            view?.drawCircle(at: CGPoint(from: vertice), radius: 2, color: .yellow)
         }
     }
     
