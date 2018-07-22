@@ -2,13 +2,20 @@ import UIKit
 
 let epsilon: CGFloat = 0.1
 
-struct Point: Equatable, Hashable {
+class Point: Equatable, Hashable, CustomStringConvertible {
     let x: CGFloat
     let y: CGFloat
+    var tag: Int?
+    var lineSegment: LineSegment?
     
-    init(x: CGFloat, y: CGFloat) {
-        self.x = x
-        self.y = y
+    var description: String {
+        return "x: \(x), y: \(y), tag: \(String(describing: tag))"
+    }
+    
+    init(x: CGFloat, y: CGFloat, lineSegment: LineSegment? = nil) {
+        self.x = x.rounded()
+        self.y = y.rounded()
+        self.lineSegment = lineSegment
     }
     
     init(from point: CGPoint) {
@@ -39,9 +46,22 @@ struct Circle {
     let radius: CGFloat
 }
 
-struct LineSegment: Equatable, Hashable {
+class LineSegment: Equatable, Hashable {
     let startPoint: Point
     let endPoint: Point
+    
+    init(startPoint: Point, endPoint: Point) {
+        self.startPoint = startPoint
+        self.endPoint = endPoint
+    }
+    
+    static func == (lhs: LineSegment, rhs: LineSegment) -> Bool {
+        return (lhs.startPoint == rhs.startPoint) && (lhs.endPoint == rhs.endPoint)
+    }
+    
+    public var hashValue: Int {
+        return startPoint.hashValue << 32 ^ endPoint.hashValue
+    }
 }
 
 enum PointsRelation: Equatable {

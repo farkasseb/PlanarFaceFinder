@@ -72,7 +72,6 @@ final class MathHelperImplementation: MathHelper {
         case .twoSolutions(let intersection1X, let intersection2X):
             let intersection1 = Point(x: intersection1X, y: calculateYFor(m: m, x: intersection1X, c: c))
             let intersection2 = Point(x: intersection2X, y: calculateYFor(m: m, x: intersection2X, c: c))
-            print(intersection1, intersection2)
             
             switch (isLineSegment(lineSegment, contains: intersection1), isLineSegment(lineSegment, contains: intersection2)) {
             case (true, true):
@@ -86,7 +85,6 @@ final class MathHelperImplementation: MathHelper {
             }
         case .oneSolution(let intersectionX):
             let intersection = Point(x: intersectionX, y: calculateYFor(m: m, x: intersectionX, c: c))
-            print(intersection)
             
             if isLineSegment(lineSegment, contains: intersection) {
                 return LineSegmentCircleRelation.oneIntersection(intersection)
