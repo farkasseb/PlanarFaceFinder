@@ -27,7 +27,7 @@ final class PlanarFaceFinderPresenter {
         view?.clearCanvas()
 
         calculatedFaces.forEach { points in
-            let center = Point(x: points.reduce(0) { $0 + $1.x }, y: points.reduce(0) { $0 + $1.y })
+            let center = Point(x: (points.reduce(0) { $0 + $1.x }) / CGFloat(points.count), y: (points.reduce(0) { $0 + $1.y }) / CGFloat(points.count))
             let orderedPoints = mathHelper.orderPointsClockwiseDirection(points: Array(points), from: center)
             view?.fillAreaEnclosedBy(points: orderedPoints.map({ CGPoint(x: $0.x, y: $0.y )}))
         }
