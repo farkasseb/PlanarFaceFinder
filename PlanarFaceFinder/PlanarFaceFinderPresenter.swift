@@ -14,67 +14,85 @@ final class PlanarFaceFinderPresenter {
     weak var view: PlanarFaceFinderView?
     
     private let mathHelper: MathHelper = MathHelperImplementation.sharedInstance
-    private var lineSegments = [LineSegment]()
     
-    private var calculatedVertices = Set<CGPoint>()
-    private var calculatedLineSegments = [LineSegment]()
+    private var calculatedVertices = Set<Point>()
+    private var calculatedTVertices = Set<Point>()
+    private var calculatedLineSegments = Set<LineSegment>()
     
-    private var startPoint: CGPoint?
-    private var endPoint: CGPoint?
+    private var startPoint: Point?
+    private var endPoint: Point?
     
-    private func drawLineSegments() {
+    private func draw() {
         view?.clearCanvas()
         
-        calculateVerticesAndEdges()
         calculatedVertices.forEach { vertice in
-            view?.drawCircle(at: vertice)
+            view?.drawCircle(at: CGPoint(from: vertice), with: .blue)
         }
-        calculatedLineSegments.forEach { (startPoint, endPoint) in
-            view?.drawLine(from: startPoint, to: endPoint)
+        calculatedLineSegments.forEach { lineSegment in
+            view?.drawLine(from: CGPoint(from: lineSegment.startPoint), to: CGPoint(from: lineSegment.endPoint))
+        }
+        calculatedTVertices.forEach { vertice in
+            view?.drawCircle(at: CGPoint(from: vertice), with: .yellow)
         }
     }
     
-    private func calculateVerticesAndEdges() {
-        calculatedVertices.removeAll()
-        calculatedLineSegments.removeAll()
+    private func addNewLineSegment(_ lineSegment: LineSegment) {
+        calculatedVertices.insert(lineSegment.startPoint)
+        calculatedVertices.insert(lineSegment.endPoint)
         
-        lineSegments.forEach { (startPoint, endPoint) in
-            calculatedVertices.insert(startPoint)
-            calculatedVertices.insert(endPoint)
-        }
-        
-        var tempLineSegments = lineSegments
-        while !tempLineSegments.isEmpty {
-            let firstLineSegment = tempLineSegments.removeFirst()
-            calculatedLineSegments.append(firstLineSegment)
-            
-            tempLineSegments.forEach { (startPoint, endPoint) in
-                if let intersection = mathHelper.intersection(of: (startPoint, endPoint),
-                                                              and: (firstLineSegment.p1, firstLineSegment.p2)) {
-                    calculatedVertices.insert(intersection)
-                    
-                    _ = calculatedLineSegments.removeLast() // instead of the original segment we have 4 segments
-                    calculatedLineSegments.append((p1: intersection, p2: firstLineSegment.p1))
-                    calculatedLineSegments.append((p1: intersection, p2: firstLineSegment.p2))
-                    calculatedLineSegments.append((p1: intersection, p2: startPoint))
-                    calculatedLineSegments.append((p1: intersection, p2: endPoint))
-                }
+        var intersects = false
+        calculatedLineSegments.forEach { currentLineSegment in
+            if let intersection = mathHelper.intersection(of: currentLineSegment, and: lineSegment), !calculatedVertices.contains(intersection) {
+                intersects = true
+                calculatedVertices.insert(intersection)
+                
+                calculatedLineSegments.remove(currentLineSegment)
+                let newLineSegments = [
+                    LineSegment(startPoint: intersection, endPoint: lineSegment.startPoint),
+                    LineSegment(startPoint: intersection, endPoint: lineSegment.endPoint),
+                    LineSegment(startPoint: intersection, endPoint: currentLineSegment.startPoint),
+                    LineSegment(startPoint: intersection, endPoint: currentLineSegment.endPoint)
+                ]
+                newLineSegments.forEach({ addNewLineSegment($0) })
             }
         }
+        
+        if !calculatedLineSegments.contains(lineSegment) && !intersects {
+            calculatedLineSegments.insert(lineSegment)
+        }
+    }
+    
+    private func calculateTVertices() -> Set<Point> {
+        var calculatedTVertices = Set<Point>()
+        
+        let firstModifier: CGFloat = 1/3
+        let secondModifier: CGFloat = 2/3
+        calculatedLineSegments.forEach { lineSegment in
+            let x1: CGFloat = lineSegment.startPoint.x + firstModifier * (lineSegment.endPoint.x - lineSegment.startPoint.x)
+            let y1: CGFloat = lineSegment.startPoint.y + firstModifier * (lineSegment.endPoint.y - lineSegment.startPoint.y)
+            
+            let x2: CGFloat = lineSegment.startPoint.x + secondModifier * (lineSegment.endPoint.x - lineSegment.startPoint.x)
+            let y2: CGFloat = lineSegment.startPoint.y + secondModifier * (lineSegment.endPoint.y - lineSegment.startPoint.y)
+            
+            calculatedTVertices.insert(Point(x: x1, y: y1))
+            calculatedTVertices.insert(Point(x: x2, y: y2))
+        }
+        
+        return calculatedTVertices
     }
 }
 
 extension PlanarFaceFinderPresenter: PlanarFaceFinderPresenterInput {
     func drawingStarted(from startPoint: CGPoint) {
-        self.startPoint = startPoint
+        self.startPoint = Point(from: startPoint)
     }
     
     func drawingMoved(to endPoint: CGPoint) {
-        self.endPoint = endPoint
+        self.endPoint = Point(from: endPoint)
         
         if let startPoint = startPoint {
-            drawLineSegments()
-            view?.drawLine(from: startPoint, to: endPoint)
+            draw()
+            view?.drawLine(from: CGPoint(from: startPoint), to: endPoint)
         }
     }
     
@@ -82,15 +100,18 @@ extension PlanarFaceFinderPresenter: PlanarFaceFinderPresenterInput {
         guard let startPoint = startPoint, let endPoint = endPoint else {
             return
         }
-        lineSegments.append((startPoint, endPoint))
-        drawLineSegments()
+        addNewLineSegment(LineSegment(startPoint: startPoint, endPoint: endPoint))
+        calculatedTVertices = calculateTVertices()
+        draw()
         
         self.startPoint = nil
         self.endPoint = nil
     }
     
     func clearCanvasButtonTouchUpInside() {
-        lineSegments.removeAll()
+        calculatedVertices.removeAll()
+        calculatedTVertices.removeAll()
+        calculatedLineSegments.removeAll()
         view?.clearCanvas()
     }
 }

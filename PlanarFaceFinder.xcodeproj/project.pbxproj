@@ -15,7 +15,7 @@
 		C53F638421028E60009F023C /* PlanarFaceFinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F638321028E60009F023C /* PlanarFaceFinderTests.swift */; };
 		C53F639021028F04009F023C /* MathHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F638F21028F04009F023C /* MathHelper.swift */; };
 		C569AF572103753200E4DCA7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C569AF562103753200E4DCA7 /* Localizable.strings */; };
-		C569AF59210377AD00E4DCA7 /* CGPointExtenstion.swift in Sources */ = {isa = PBXBuildFile; fileRef = C569AF58210377AD00E4DCA7 /* CGPointExtenstion.swift */; };
+		C580E5EF2104CA810021F108 /* MathModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C580E5EE2104CA810021F108 /* MathModels.swift */; };
 		C581F5D8210360E50044ED56 /* PlanarFaceFinderPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C581F5D7210360E50044ED56 /* PlanarFaceFinderPresenter.swift */; };
 /* End PBXBuildFile section */
 
@@ -42,7 +42,7 @@
 		C53F638521028E60009F023C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C53F638F21028F04009F023C /* MathHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathHelper.swift; sourceTree = "<group>"; };
 		C569AF562103753200E4DCA7 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
-		C569AF58210377AD00E4DCA7 /* CGPointExtenstion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGPointExtenstion.swift; sourceTree = "<group>"; };
+		C580E5EE2104CA810021F108 /* MathModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathModels.swift; sourceTree = "<group>"; };
 		C581F5D7210360E50044ED56 /* PlanarFaceFinderPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanarFaceFinderPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -93,6 +93,7 @@
 		C53F636D21028E5D009F023C /* PlanarFaceFinder */ = {
 			isa = PBXGroup;
 			children = (
+				C580E5ED2104CA5F0021F108 /* Model */,
 				C53F638E21028ED8009F023C /* Helpers */,
 				C53F636E21028E5D009F023C /* AppDelegate.swift */,
 				C53F637021028E5D009F023C /* PlanarFaceFinderViewController.swift */,
@@ -118,10 +119,17 @@
 		C53F638E21028ED8009F023C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				C569AF58210377AD00E4DCA7 /* CGPointExtenstion.swift */,
 				C53F638F21028F04009F023C /* MathHelper.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		C580E5ED2104CA5F0021F108 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C580E5EE2104CA810021F108 /* MathModels.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -226,10 +234,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				C53F639021028F04009F023C /* MathHelper.swift in Sources */,
-				C569AF59210377AD00E4DCA7 /* CGPointExtenstion.swift in Sources */,
 				C53F637121028E5D009F023C /* PlanarFaceFinderViewController.swift in Sources */,
 				C53F636F21028E5D009F023C /* AppDelegate.swift in Sources */,
 				C581F5D8210360E50044ED56 /* PlanarFaceFinderPresenter.swift in Sources */,
+				C580E5EF2104CA810021F108 /* MathModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
